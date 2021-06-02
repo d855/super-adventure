@@ -1,19 +1,49 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <input type="text" v-model="searchTerm">
+  <select v-model="serachType">
+    <option value="movie" selected>Movies</option>
+    <option value="series">Series</option>
+    <option value="episode">Episodes</option>
+  </select>
+  <button @click="searchDb">Search</button>
+  <movieList v-bind:movieDetails="this.searchResults" />
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import movieList from './components/movieList'
+import axios from 'axios'
 
 export default {
   name: 'App',
+  data(){
+    return {
+      searchTerm: '',
+      serachType: '',
+      searchResults: {}
+    }
+  },
   components: {
-    HelloWorld
+    movieList
+  },
+  methods: {
+    searchDb(){
+      axios.get('http://www.omdbapi.com/', {
+        params: {
+          apikey: 'ebdfe023',
+          s: this.searchTerm,
+          type: this.serachType
+        }
+      })
+          .then((response) => {
+            console.log(response.data.Search);
+            this.searchResults = response.data.Search;
+       })
+    }
   }
 }
 </script>
 
+    MovieList
 <style lang="scss">
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
